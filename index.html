@@ -25,24 +25,24 @@
                 <div class="logo-icon">
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
-                <h1 id="login-title">ShieldPass</h1>
-                <p id="login-subtitle">Secure Zero-Knowledge Password Vault</p>
+                <h1>ShieldPass</h1>
+                <p>Secure Enterprise Password Manager</p>
             </div>
             
             <form id="login-form">
                 <div class="form-group">
-                    <label for="login-username" id="label-username">Vault Username</label>
+                    <label for="login-username">Username</label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-user input-icon"></i>
-                        <input type="text" id="login-username" placeholder="Enter vault username" required autocomplete="username">
+                        <input type="text" id="login-username" placeholder="Enter username" required autocomplete="username">
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="login-password" id="label-password">Master Password</label>
+                    <label for="login-password">Password</label>
                     <div class="input-wrapper">
-                        <i class="fa-solid fa-key input-icon"></i>
-                        <input type="password" id="login-password" placeholder="Enter master password" required autocomplete="current-password">
+                        <i class="fa-solid fa-lock input-icon"></i>
+                        <input type="password" id="login-password" placeholder="Enter password" required autocomplete="current-password">
                         <button type="button" id="toggle-login-pass" class="btn-icon-inside">
                             <i class="fa-solid fa-eye"></i>
                         </button>
@@ -55,22 +55,56 @@
                 </div>
                 
                 <button type="submit" class="btn btn-primary btn-block" id="btn-login-submit">
-                    <span>Unlock Vault</span>
-                    <i class="fa-solid fa-unlock"></i>
+                    <span>Sign In</span>
+                    <i class="fa-solid fa-arrow-right"></i>
                 </button>
+
+                <div class="toggle-auth" style="margin-top: 20px; text-align: center; font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 15px;">
+                    <span style="color: var(--text-muted);">Don't have an account?</span>
+                    <a href="#" id="link-to-register" style="color: #6366f1; text-decoration: none; font-weight: 500; margin-left: 5px;">Sign Up</a>
+                </div>
             </form>
 
-            <div class="login-actions" style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.06); text-align: center; font-size: 0.85rem; display: flex; flex-direction: column; gap: 12px;">
-                <a href="#" id="link-import-vault" style="color: #6366f1; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-weight: 500; transition: color 0.2s;">
-                    <i class="fa-solid fa-file-import"></i>
-                    <span>Import Encrypted Backup</span>
-                </a>
-                <input type="file" id="input-import-file" accept=".json" style="display: none;">
+            <form id="register-form" class="hidden">
+                <div class="form-group">
+                    <label for="register-username">Username</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user input-icon"></i>
+                        <input type="text" id="register-username" placeholder="Choose a username" required autocomplete="username">
+                    </div>
+                </div>
                 
-                <a href="#" id="link-reset-vault" class="hidden" style="color: var(--text-muted); text-decoration: none; font-size: 0.75rem; transition: color 0.2s;" onclick="if(confirm('CẢNH BÁO: Đặt lại két sắt sẽ xóa sạch tất cả tài khoản/mật khẩu đang lưu trên máy này. Bạn có chắc chắn muốn tiếp tục?')) { localStorage.clear(); sessionStorage.clear(); location.reload(); } return false;">
-                    Reset Vault (Xóa sạch két sắt)
-                </a>
-            </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock input-icon"></i>
+                        <input type="password" id="register-password" placeholder="Choose a password" required autocomplete="new-password">
+                        <button type="button" id="toggle-register-pass" class="btn-icon-inside">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="register-error" class="alert alert-danger hidden">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span id="register-error-msg">Username already exists.</span>
+                </div>
+
+                <div id="register-success" class="alert alert-success hidden">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Registration successful! You can now sign in.</span>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block" id="btn-register-submit">
+                    <span>Sign Up</span>
+                    <i class="fa-solid fa-user-plus"></i>
+                </button>
+
+                <div class="toggle-auth" style="margin-top: 20px; text-align: center; font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 15px;">
+                    <span style="color: var(--text-muted);">Already have an account?</span>
+                    <a href="#" id="link-to-login" style="color: #6366f1; text-decoration: none; font-weight: 500; margin-left: 5px;">Sign In</a>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -104,20 +138,16 @@
                 </ul>
             </nav>
 
-            <div class="sidebar-footer" style="display: flex; flex-direction: column; gap: 8px;">
+            <div class="sidebar-footer">
                 <div class="user-profile">
                     <div class="user-avatar">
                         <i class="fa-solid fa-user-shield"></i>
                     </div>
                     <div class="user-details">
                         <span class="user-name" id="user-display-name">Admin</span>
-                        <span class="user-role">Vault Owner</span>
+                        <span class="user-role">Administrator</span>
                     </div>
                 </div>
-                <button id="btn-export" class="btn btn-secondary btn-block" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: center; align-items: center; gap: 8px; width: 100%; border-radius: 8px; padding: 8px 12px; font-size: 0.9rem; cursor: pointer; transition: background 0.2s;" title="Export Encrypted Backup">
-                    <i class="fa-solid fa-file-export"></i>
-                    <span>Backup Vault</span>
-                </button>
                 <button id="btn-logout" class="btn btn-logout" title="Sign Out">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>Sign Out</span>
