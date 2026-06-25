@@ -30,6 +30,7 @@ const App = {
         this.logoutBtn = document.getElementById('btn-logout');
         this.sidebarToggleBtn = document.getElementById('sidebar-toggle');
         this.sidebar = document.querySelector('.sidebar');
+        this.sidebarOverlay = document.getElementById('sidebar-overlay');
         
         // Navigation links
         this.navLinks = {
@@ -65,17 +66,17 @@ const App = {
 
         // Mobile Sidebar Toggle
         if (this.sidebarToggleBtn) {
-            this.sidebarToggleBtn.addEventListener('click', () => {
-                this.sidebar.classList.toggle('open');
-            });
+            this.sidebarToggleBtn.addEventListener('click', () => this.toggleSidebar());
+        }
+
+        if (this.sidebarOverlay) {
+            this.sidebarOverlay.addEventListener('click', () => this.closeSidebar());
         }
 
         // Close sidebar on navigate (for mobile layout)
         Object.values(this.navLinks).forEach(link => {
             if (link) {
-                link.addEventListener('click', () => {
-                    this.sidebar.classList.remove('open');
-                });
+                link.addEventListener('click', () => this.closeSidebar());
             }
         });
 
@@ -87,6 +88,12 @@ const App = {
     },
 
     async checkInitialAuth() {
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+            this.forceToLogin();
+            return;
+        }
+
         const result = await window.ApiService.checkAuthStatus();
         if (result && result.authenticated) {
             this.state.isAuthenticated = true;
@@ -154,6 +161,26 @@ const App = {
         this.forceToLogin();
     },
 
+    toggleSidebar() {
+        if (!this.sidebar) return;
+        const isOpen = this.sidebar.classList.toggle('open');
+        document.body.classList.toggle('mobile-sidebar-open', isOpen);
+        if (this.sidebarOverlay) {
+            this.sidebarOverlay.classList.toggle('active', isOpen);
+            this.sidebarOverlay.classList.toggle('hidden', !isOpen);
+        }
+    },
+
+    closeSidebar() {
+        if (!this.sidebar) return;
+        this.sidebar.classList.remove('open');
+        document.body.classList.remove('mobile-sidebar-open');
+        if (this.sidebarOverlay) {
+            this.sidebarOverlay.classList.remove('active');
+            this.sidebarOverlay.classList.add('hidden');
+        }
+    },
+
     forceToLogin() {
         this.state.isAuthenticated = false;
         this.state.username = null;
@@ -161,6 +188,7 @@ const App = {
         this.appContainer.classList.add('hidden');
         this.loginContainer.classList.remove('hidden');
         this.viewContent.innerHTML = '';
+        this.closeSidebar();
         window.location.hash = '';
     },
 

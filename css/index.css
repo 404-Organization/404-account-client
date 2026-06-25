@@ -59,6 +59,11 @@ body {
     font-size: 15px;
     line-height: 1.5;
     overflow-x: hidden;
+    min-height: 100vh;
+}
+
+body.mobile-sidebar-open {
+    overflow: hidden;
 }
 
 input, button, textarea, select {
@@ -542,7 +547,23 @@ textarea {
     flex: 1;
     display: flex;
     flex-direction: column;
-    min-width: 0; /* Prevent flex children from overflowing */
+    min-width: 0;
+}
+
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.68);
+    backdrop-filter: blur(4px);
+    z-index: 99;
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--transition-normal);
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 /* Header Styling */
@@ -1108,72 +1129,152 @@ textarea {
     .app-layout {
         flex-direction: column;
     }
-    
+
     .sidebar {
-        width: 100%;
-        height: auto;
-        border-right: none;
-        border-bottom: 1px solid var(--border-color);
-        position: relative;
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: min(84vw, 320px);
+        border-right: 1px solid var(--border-color);
+        transform: translateX(-100%);
+        box-shadow: var(--shadow-lg);
+        z-index: 100;
     }
-    
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
     .sidebar-brand {
         justify-content: space-between;
     }
-    
+
     .sidebar-nav {
-        display: none; /* Can toggle using a class */
         padding: 16px;
     }
-    
-    .sidebar.open .sidebar-nav {
-        display: block;
-    }
-    
+
     .sidebar-footer {
-        display: none;
-    }
-    
-    .sidebar.open .sidebar-footer {
         display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
+        flex-direction: column;
+        gap: 12px;
     }
-    
+
     .sidebar-toggle-btn {
         display: block;
     }
-    
+
     .content-container {
         padding: 20px;
     }
-    
+
     .app-header {
         padding: 0 20px;
     }
 }
 
 @media (max-width: 768px) {
+    .login-wrapper {
+        padding: 16px;
+    }
+
+    .login-card {
+        padding: 28px 20px;
+    }
+
     .form-row {
         flex-direction: column;
         gap: 0;
     }
-    
+
     .stats-row {
         grid-template-columns: 1fr;
     }
-    
+
     .search-bar {
         width: 100%;
     }
-    
+
     .accounts-page-header {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .accounts-page-header .btn {
+        width: 100%;
+    }
+
+    .content-container {
+        padding: 16px;
+    }
+
+    .app-header {
+        height: 64px;
+        padding: 0 16px;
+    }
+
+    .status-indicator span:last-child {
+        display: none;
+    }
+
+    .toast-container {
+        top: 12px;
+        right: 12px;
+        left: 12px;
+    }
+
+    .toast {
+        min-width: auto;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-header h1 {
+        font-size: 24px;
+    }
+
+    .login-header p {
+        font-size: 13px;
+    }
+
+    .btn {
+        padding: 10px 16px;
+    }
+
+    .card-header,
+    .account-card,
+    .content-card,
+    .stat-card {
+        padding: 18px;
+    }
+
+    .stat-value {
+        font-size: 28px;
+    }
+
+    .account-card-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .modal-overlay {
+        padding: 12px;
+    }
+
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .modal-footer {
+        flex-direction: column-reverse;
+    }
+
+    .modal-footer .btn {
         width: 100%;
     }
 }

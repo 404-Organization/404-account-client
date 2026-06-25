@@ -1,11 +1,20 @@
 // ShieldPass - API Service
 const ApiService = {
+    getToken() {
+        return localStorage.getItem('auth_token');
+    },
+
     async request(url, options = {}) {
-        options.credentials = 'include'; // Ensure JSESSIONID session cookie is included
+        options.credentials = 'omit';
         options.headers = {
             'Accept': 'application/json',
             ...options.headers
         };
+
+        const token = this.getToken();
+        if (token) {
+            options.headers['Authorization'] = `Bearer ${token}`;
+        }
         
         if (options.body && typeof options.body === 'object') {
             options.headers['Content-Type'] = 'application/json';
@@ -16,7 +25,7 @@ const ApiService = {
             const response = await fetch(`${window.CONFIG.API_BASE_URL}${url}`, options);
             
             if (response.status === 401) {
-                // Dispatch unauthorized event to trigger app redirection to login
+                localStorage.removeItem('auth_token');
                 window.dispatchEvent(new CustomEvent('app-unauthorized'));
                 throw new Error('Session expired. Please sign in again.');
             }
@@ -79,16 +88,24 @@ const ApiService = {
     },
 
     async login(username, password) {
-        return this.request('/api/auth/login', {
+        const response = await this.request('/api/auth/login', {
             method: 'POST',
             body: { username, password }
         });
+
+        if (response && response.token) {
+            localStorage.setItem('auth_token', response.token);
+        }
+
+        return response;
     },
 
     async logout() {
-        return this.request('/api/auth/logout', {
+        const result = await this.request('/api/auth/logout', {
             method: 'POST'
         });
+        localStorage.removeItem('auth_token');
+        return result;
     }
 };
 
