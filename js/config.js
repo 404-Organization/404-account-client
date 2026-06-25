@@ -1,8 +1,10 @@
 // ShieldPass - Client Configuration
+const isLocalhost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const isNetlifyHost = window.location.hostname.endsWith('.netlify.app') || window.location.hostname === '404account.netlify.app';
+
 const CONFIG = {
-    // Dynamic determination of backend base URL
-    API_BASE_URL: (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    API_BASE_URL: isLocalhost
         ? 'http://localhost:8080'
-        : 'https://password-manager-backend.onrender.com' // Replace with your actual Render backend URL
+        : (isNetlifyHost ? 'https://four04-account-server.onrender.com' : 'https://four04-account-server.onrender.com')
 };
 window.CONFIG = CONFIG;
