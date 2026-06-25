@@ -63,7 +63,6 @@ const DashboardView = {
                         <i class="fa-solid fa-clock-rotate-left"></i>
                     </div>
                 </div>
-            ]; // wait, typo here, will fix
             `;
             
             this.renderRecentAccounts(container.querySelector('#recent-accounts-list'), stats.recentAccounts);
