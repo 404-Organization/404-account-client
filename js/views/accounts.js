@@ -4,7 +4,11 @@ const AccountsView = {
     cardsContainer: null,
     searchTimeout: null,
 
-    async render(container) {
+    isActiveRender(renderRequestId) {
+        return !renderRequestId || !window.App || window.App.state.renderRequestId === renderRequestId;
+    },
+
+    async render(container, renderRequestId = 0) {
         this.container = container;
         container.innerHTML = `
             <div class="accounts-page-header">
@@ -28,17 +32,22 @@ const AccountsView = {
         this.cardsContainer = container.querySelector('#accounts-cards-grid');
 
         // Initial Load
-        await this.loadAccounts();
+        await this.loadAccounts('', renderRequestId);
+        if (!this.isActiveRender(renderRequestId)) return;
 
         // Attach listeners
         this.attachEventListeners();
     },
 
-    async loadAccounts(searchQuery = '') {
+    async loadAccounts(searchQuery = '', renderRequestId = 0) {
+        if (!this.cardsContainer) return;
+
         try {
             const accounts = await window.ApiService.fetchAccounts(searchQuery);
+            if (!this.isActiveRender(renderRequestId)) return;
             this.renderCards(accounts);
         } catch (error) {
+            if (!this.isActiveRender(renderRequestId)) return;
             this.cardsContainer.innerHTML = `
                 <div class="alert alert-danger" style="grid-column: 1/-1;">
                     <i class="fa-solid fa-circle-xmark"></i>
@@ -49,6 +58,8 @@ const AccountsView = {
     },
 
     renderCards(accounts) {
+        if (!this.cardsContainer) return;
+
         if (!accounts || accounts.length === 0) {
             this.cardsContainer.innerHTML = `
                 <div class="empty-state">
@@ -135,6 +146,8 @@ const AccountsView = {
     },
 
     attachEventListeners() {
+        if (!this.container || !this.cardsContainer) return;
+
         // Real-time Search Input with Debounce
         const searchInput = this.container.querySelector('#accounts-search');
         if (searchInput) {

@@ -4,7 +4,8 @@ const App = {
     state: {
         isAuthenticated: false,
         username: null,
-        currentRoute: ''
+        currentRoute: '',
+        renderRequestId: 0
     },
 
     init() {
@@ -297,6 +298,7 @@ const App = {
 
         const hash = window.location.hash || '#dashboard';
         this.state.currentRoute = hash;
+        const renderRequestId = ++this.state.renderRequestId;
 
         // Toggle navigation links active state
         Object.entries(this.navLinks).forEach(([key, link]) => {
@@ -315,11 +317,11 @@ const App = {
         switch (hash) {
             case '#dashboard':
                 this.viewTitle.textContent = 'Dashboard';
-                window.DashboardView.render(this.viewContent);
+                window.DashboardView.render(this.viewContent, renderRequestId);
                 break;
             case '#accounts':
                 this.viewTitle.textContent = 'Vault Accounts';
-                window.AccountsView.render(this.viewContent);
+                window.AccountsView.render(this.viewContent, renderRequestId);
                 break;
             default:
                 // Fallback to Dashboard
@@ -356,6 +358,7 @@ const App = {
 };
 
 // Global reference
+window.App = App;
 window.showToast = (message, type) => App.showToast(message, type);
 
 // Start application

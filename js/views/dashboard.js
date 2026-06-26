@@ -1,6 +1,12 @@
 // ShieldPass - Dashboard View Controller
 const DashboardView = {
-    async render(container) {
+    isActiveRender(renderRequestId) {
+        return !renderRequestId || !window.App || window.App.state.renderRequestId === renderRequestId;
+    },
+
+    async render(container, renderRequestId = 0) {
+        if (!container) return;
+
         container.innerHTML = `
             <div class="stats-row">
                 <div class="stat-card">
@@ -42,9 +48,13 @@ const DashboardView = {
 
         try {
             const stats = await window.ApiService.fetchStats();
+            if (!this.isActiveRender(renderRequestId)) return;
             
+            const statsRow = container.querySelector('.stats-row');
+            if (!statsRow) return;
+
             // Update stats values
-            container.querySelector('.stats-row').innerHTML = `
+            statsRow.innerHTML = `
                 <div class="stat-card">
                     <div class="stat-info">
                         <h4>Total Credentials</h4>
@@ -65,8 +75,12 @@ const DashboardView = {
                 </div>
             `;
             
-            this.renderRecentAccounts(container.querySelector('#recent-accounts-list'), stats.recentAccounts);
+            const recentList = container.querySelector('#recent-accounts-list');
+            if (recentList) {
+                this.renderRecentAccounts(recentList, stats.recentAccounts);
+            }
         } catch (error) {
+            if (!this.isActiveRender(renderRequestId)) return;
             container.innerHTML = `
                 <div class="alert alert-danger">
                     <i class="fa-solid fa-circle-xmark"></i>
@@ -77,6 +91,8 @@ const DashboardView = {
     },
 
     renderRecentAccounts(listContainer, accounts) {
+        if (!listContainer) return;
+
         if (!accounts || accounts.length === 0) {
             listContainer.innerHTML = `
                 <div style="text-align: center; padding: 30px; color: var(--text-muted);">
